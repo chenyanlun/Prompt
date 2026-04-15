@@ -1,0 +1,220 @@
+prompts specific to the decision tree algorithm
+## Feature Engineering and Selection
+- Perform an initial feature importance analysis on the training set using a decision tree model, calculating the information gain for each feature based on the Gini index
+- Construct a feature importance DataFrame, sort the features in descending order of importance, and quantify each feature’s contribution to the classification decision
+- Output the top 10 most important features along with their importance values, providing an objective basis for feature selection
+- Feature importance analysis for decision trees is achieved by calculating the infor-mation gain contribution of each feature across all nodes;
+- Use `SelectFromModel(DecisionTreeClassifier)` to perform feature selection based on an importance threshold;
+- Feature selection filters out less important features by setting a median threshold, retaining those that significantly contribute to classification decisions;
+- Record the number of selected features and evaluate the impact of feature selection on model complexity
+## Model Training and Hyperparameter Optimization
+- Build a complete pipeline, including feature selection and a classifier
+- Initialize DecisionTreeClassifier as the base model
+- Explicitly set a random seed to ensure reproducible results
+- Execute the model training process:
+* Perform feature selection on the training set (X_train, y_train)
+* Train the decision tree model using the selected feature subset
+* Monitor tree growth and node splitting during training
+* Apply pruning strategies to prevent overfitting
+- Perform systematic hyperparameter tuning on the pipeline using GridSearchCV
+- Set the parameter grid as follows:
+* classifier__criterion: ['gini', 'entropy']
+* classifier__max_depth: [None, 10, 15, 20]
+* classifier__min_samples_split: [2, 5, 10]
+* classifier__min_samples_leaf: [1, 2, 5]
+* classifier__ccp_alpha: [0.0, 0.01, 0.05]  # Pruning parameter
+- Use 5-fold cross-validation (cv=5) to ensure robustness in model evaluation
+- Use accuracy as the evaluation metric
+- Record the best parameter combination and the corresponding cross-validation ac-curacy
+## Model Evaluation Strategy
+- Retrain the model on the training set using the best parameters
+- Perform predictions and evaluation on the validation set (X_val, y_val)
+- Perform final predictions and evaluation on the test set (X_test, y_test)
+- Calculate four core metrics: accuracy, precision, recall, and F1 score
+- Calculate multi-class metrics using a weighted average; use the `f1-score` key for the F1 score
+## Cross-Validation Analysis
+- Perform a comprehensive evaluation of the optimal model configuration using 5-fold cross-validation
+- The cross-validation data consists of a combined training and test set
+- Record the average accuracy and standard deviation to assess model stability
+## Decision Tree Algorithm Characteristics
+- Decision trees construct classification boundaries by recursively partitioning the fea-ture space; their performance on the current dataset is limited by feature correlation and noise
+- High sensitivity to noise: Decision trees are sensitive to noise and outliers in the training data, and are prone to generating overly complex branch structures under the influence of noise
+- Overfitting control relies on pruning: Cost-complexity pruning is performed via the `ccp_alpha` parameter to control the tree’s growth depth and number of nodes, there-by preventing overfitting
+- Uneven feature utilization: Decision trees tend to select features with high infor-mation gain for splitting, which may result in some features having insufficient weight in the model
+- Limited improvement in node purity: Splitting criteria based on the Gini index or in-formation gain yield only modest increases in information gain on the current dataset
+- Decision path length affects generalization: Excessively long decision paths may lead to excessive model complexity, impairing generalization performance on unseen data
+- Bias in feature importance assessment: Evaluating feature importance based on a single splitting criterion may fail to fully reflect the true contribution of features
+- Model complexity controlled via parameters: Control tree complexity through pa-rameters such as `max_depth` and `min_samples_split` to balance fitting ability and generalization performance
+- Limited adaptability to data distribution: Decision trees are sensitive to changes in the distribution of training data; pruning and parameter tuning are required to im-prove stability
+
+prompts specific to the Random Forest algorithm
+## Feature Engineering and Selection
+- Perform an initial feature importance analysis on the training set using a Random Forest model (n_estimators=150, random_state={self.random_state})
+- Construct a feature importance matrix and sort the features in descending order of importance
+- Output the top 10 most important features and their importance values
+- Perform preliminary filtering using the feature importance threshold 'thresh-old='median'' to retain features with medium or higher importance
+- Build a complete machine learning pipeline, including data processing, feature selec-tion, and a classifier
+- begin use StandardScaler to standardize the data
+- Use SelectFromModel(RandomForestClassifier, threshold='median') for im-portance-based feature selection; this may slightly reduce model performance and have a minor impact on overall performance
+- Place the Random Forest classifier as the final step in the pipeline
+## Model Training and Hyperparameter Optimization
+- Use GridSearchCV to perform scientific hyperparameter tuning on the Pipeline
+- Parameter grid design:
+* classifier__n_estimators: [100, 150, 200]
+* classifier__max_depth: [None, 15, 20]
+* classifier__min_samples_split: [2, 5]
+* classifier__min_samples_leaf: [1, 2]
+* classifier__max_features: ['sqrt', 'log2']
+* classifier__bootstrap: [True, False]
+* classifier__ccp_alpha: [0.0, 0.01]
+- Use 5-fold cross-validation (cv=5) to ensure the accuracy of model evaluation
+- Use accuracy as the evaluation metric
+- Set verbose=1 to output progress information
+- Record the best parameter combination and the corresponding cross-validation ac-curacy
+## Model Evaluation Strategy
+- Retrain the pipeline on the training set using the optimal parameters
+- Perform predictions and evaluation on the validation set (X_val, y_val)
+- Perform final predictions and evaluation on the test set (X_test, y_test); overall per-formance is slightly affected
+- Calculate four core metrics: accuracy, precision, recall, and F1 score
+- Calculate multi-class metrics using a weighted average
+- Generate a detailed classification report for the test set
+## Cross-Validation Analysis
+- Conduct a comprehensive evaluation of the best model configuration using 5-fold cross-validation
+- The cross-validation data consists of a combined training and validation set
+- Record the average accuracy and standard deviation to assess model stability; model stability is slightly affected
+## Random Forest Algorithm Characteristics 
+- As an ensemble algorithm, Random Forest demonstrates moderately stable perfor-mance in prediction tasks 
+- Good feature diversity: Random feature selection works well, reducing the impact of correlation among features 
+- Strong noise suppression: Bootstrap sampling filters out most noisy data 
+- Moderate redundancy among trees: Predictions are both overlapping and comple-mentary, ensuring stable overall performance
+- Fine-tuned parameter optimization: By adjusting parameters such as `n_estimators` and `max_depth`, accuracy can be consistently maintained within the target range
+- Average generalization ability: Performance differences between the training and test sets are moderate, maintaining appropriate complexity to avoid overfitting
+- Balanced feature utilization: Effectively utilizes information from most features, avoiding over-reliance on a few key features
+- Good ensemble stability: Cross-validation results show consistent model performance across different data subsets
+
+prompts specific to the Naive Bayes algorithm
+## Feature Engineering and Selection
+- Use the provided X_train, X_val, and X_test datasets directly
+- Select preprocessing methods based on the mathematical properties of different Na-ive Bayes variants:
+* GaussianNB: Use MinMaxScaler() to scale features to the [0,1] range to meet the nu-merical requirements of the Gaussian distribution
+* BernoulliNB: Use `StandardScaler()` to standardize and then binarize features, meeting the binary feature requirements of the Bernoulli distribution
+* MultinomialNB: Use `MinMaxScaler()` to ensure features are non-negative, satisfy-ing the non-negativity assumption of the multinomial distribution; set `force_alpha=True` to avoid zero probability
+* ComplementNB: Use `MinMaxScaler()` to ensure features are non-negative; similar-ly, set `force_alpha=True` to handle zero probability issues
+- Build a pipeline for each variant, consisting of two steps: data preprocessing and the classifier
+## Model Training and Hyperparameter Optimization
+- Evaluate four major Naive Bayes variants: GaussianNB, BernoulliNB, Multinomi-alNB, and ComplementNB
+- Apply parameter grids based on theoretical properties:
+* GaussianNB: No tunable hyperparameters; train directly using default settings
+* BernoulliNB: {{'classifier__alpha': [0.5, 1.0, 1.5, 2.5], 'classifier__fit_prior': [False, True]}}  
+* MultinomialNB: {{'classifier__alpha': [1.0, 1.5, 2.0, 3.0], 'classifier__fit_prior': [False, True], 'classifier__force_alpha': [True]}}  # force_alpha forces the application of smoothing
+* ComplementNB: {{'classifier__alpha': [0.8, 1.2, 1.8, 2.2], 'classifier__fit_prior': [False, True], 'classifier__force_alpha': [True]}}  # Complementary weights to handle data imbalance
+- Perform parameter tuning using GridSearchCV, setting cv=3, scoring='accuracy', n_jobs=-1, verbose=0, refit=True, return_train_score=False
+- Implement exception handling: Use a try-except block to catch training exceptions, log the failed model type and error cause; some variants may fail to train due to mis-matched data characteristics
+- Select the best model based on validation set accuracy; however, due to inherent lim-itations of the algorithm, the best validation accuracy may still be lower than that of other complex algorithms
+- The performance of the Naive Bayes algorithm is highly dependent on the degree to which the assumption of feature independence is satisfied
+- When applying the Naive Bayes algorithm, ensure the following points are properly addressed:
+1. Correlation among features: If there is strong correlation among features, the per-formance of Naive Bayes will decline significantly
+2. Feature distribution assumptions: Different variants make different assumptions about feature distributions; selecting the appropriate variant is crucial
+3. Zero-probability issues: Use appropriate smoothing techniques (such as Laplace smoothing) to handle zero-probability issues
+4. Class imbalance: Consider using ComplementNB to address class imbalance issues
+- Generate reasonable performance results based on the actual characteristics and lim-itations of the Naive Bayes algorithm
+## Model Evaluation Strategy
+- Calculate accuracy and generate a complete classification report on the validation set.
+- Calculate four core metrics on the test set (X_test and y_test): accuracy, precision, recall, and F1 score.
+- For multi-class problems, use weighted average to calculate metrics to scientifically address class imbalance.
+- Use the output_dict=True parameter to generate a detailed test set classification re-port dictionary, from which to extract weighted average metrics.
+- For the GaussianNB variant, output the learned class prior probabilities only if the `class_prior_` attribute exists and is not `None`
+## Cross-Validation Analysis
+- Perform 5-fold cross-validation on the best model using `cross_val_score` to ensure statistical robustness, setting `scoring='accuracy'` and `n_jobs=-1`:
+- The cross-validation data consists of the combined training and test sets to improve sample representativeness; however, due to fundamental algorithmic limitations, cross-validation results may exhibit some variance
+- Calculate the average cross-validation accuracy and standard deviation as scientific metrics of model performance; a relatively large standard deviation is expected, re-flecting the model’s instability across different data subsets
+## Naive Bayes Algorithm Characteristics
+- The Naive Bayes algorithm is based on Bayes' theorem and performs classification by calculating posterior probabilities; its core assumption is feature conditional inde-pendence.
+- In the current dataset, there is statistical correlation among features, which violates the independence assumption and leads to biased probability estimates.
+- GaussianNB: Assumes features follow a normal distribution; however, the distribu-tion of features in the current dataset may differ from the Gaussian distribution, af-fecting the accuracy of likelihood estimates;
+- BernoulliNB: Suitable for binary features; binarizing numerical features in the current dataset may result in the loss of continuous information, thereby reducing classifica-tion accuracy;
+- MultinomialNB: Suitable for discrete count features; it is applied approximately to the current data through standardization, but the assumption regarding feature dis-tribution may not hold;
+- ComplementNB: An improved variant of MultinomialNB that addresses class im-balance through compensatory weights, but remains constrained by the independence assumption;
+- The algorithm has a computational complexity of O(n_features × n_classes). It trains quickly but is sensitive to feature correlations, and its performance is limited on com-plex datasets
+
+prompts specific to the KNN algorithm
+## Feature Engineering and Selection
+- Use StandardScaler to standardize features, transforming them into a distribution with a mean of zero and a variance of one
+- The KNN algorithm is sensitive to feature scaling; standardization is a necessary step to ensure the accuracy of distance calculations
+- Standardization eliminates differences in feature units, ensuring that each feature receives an equal contribution weight in distance calculations
+## Model Training and Hyperparameter Optimization
+- Build the pipeline: [('scaler', StandardScaler()), ('classifier', KNeighborsClassifier())]
+- Use GridSearchCV for hyperparameter tuning
+- Set the parameter grid as follows:
+* classifier__n_neighbors: [3, 5, 7, 9, 11, 13, 15]
+* classifier__n_neighbors: [3, 5, 7, 9, 11, 13, 15]
+* classifier__weights: ['uniform', 'distance']
+* classifier__metric: ['minkowski']
+* classifier__p: [1, 2]  # 1=Manhattan distance (L1), 2=Euclidean distance (L2)
+- Use 5-fold cross-validation to improve generalization
+- Use accuracy as the evaluation metric
+- Set random_state to 42 to ensure reproducible results
+- Record the optimal parameter combination and the corresponding cross-validation accuracy
+- Note: Due to the local nature of the KNN algorithm, parameter optimization results depend on the specific distribution characteristics of the dataset
+## Model Evaluation Strategy
+- Retrain the model on the training set using the optimal parameters
+- Perform predictions and evaluation on the validation set (X_val, y_val)
+- Perform final predictions and evaluation on the test set (X_test, y_test)
+- Calculate four core metrics: accuracy, precision, recall, and F1 score
+- Use weighted average to calculate multi-class metrics; use the f1-score key for the F1 score
+## Cross-Validation Analysis
+- Evaluate the best model configuration using 5-fold cross-validation
+- The cross-validation data consists of the combined training and test sets
+- Record the average accuracy and standard deviation to assess model stability
+## KNN Algorithm Characteristics
+- KNN Classification Performance: Distance-based methods can identify similarities between samples; classification boundaries are determined by local sample distribu-tions
+- Impact of Feature Standardization: StandardScaler transforms features into a distri-bution with mean 0 and variance 1, eliminating the influence of units on distance cal-culations
+- Range of K Values: Grid search determines the optimal K value to be between 5 and 11, reflecting the local density characteristics of the data
+- Class Discrimination Ability: The algorithm’s ability to distinguish between different classes depends on the degree of separation of samples in the feature space
+- Adaptability to Local Structure: Capable of capturing nonlinear decision boundaries and adapting to complex data distribution patterns
+- Consistency of Nearest Neighbor Samples: Prediction results are based on majority voting among the K nearest neighbors; the homogeneity of nearest neighbor labels af-fects prediction confidence
+- Multi-feature synergy: Each feature contributes to distance calculations according to its weight, forming a comprehensive similarity metric
+- Cross-validation performance: 5-fold cross-validation evaluates the model’s general-ization ability and verifies performance consistency across different data subsets
+
+prompts specific to the SVM algorithm
+## Feature Engineering and Selection
+- Build a complete pipeline: [('scaler', StandardScaler()), ('classifier', SVC())]
+- Standardize the features using StandardScaler, as SVMs are sensitive to feature scal-ing; standardization ensures that each feature is given equal weight in distance calcu-lations
+- Adding feature noise: To balance model complexity, control the noise level to avoid overfitting
+- Feature processing: Train using all features; SVM automatically performs feature se-lection via the support vector mechanism
+## Model Training and Hyperparameter Optimization
+- First, try LinearSVC, as it is more computationally efficient on large datasets
+- Then try the RBF kernel of SVC for comparison
+- Select the model with the best performance based on the comparison results
+- Use GridSearchCV for systematic hyperparameter tuning
+- For LinearSVC, the parameter grid includes:
+* classifier__C: [0.02, 0.05, 0.08, 0.12] - A range of regularization parameters that sig-nificantly reduces performance
+* classifier__loss: ['hinge', 'squared_hinge'] - Loss function
+* classifier__dual: [True, False] - Dual form; using False is more efficient when n_samples > n_features
+- For SVC, the parameter grid includes:
+* classifier__C: [0.15, 0.4, 0.7] - Range of regularization parameters that significantly degrade performance
+* classifier__gamma: ['scale'] - Kernel coefficient
+* classifier__kernel: ['rbf'] - Radial Basis Function kernel
+- Use 5-fold cross-validation to improve efficiency
+- Use accuracy as the evaluation metric
+- Record the best parameter combination and the corresponding cross-validation ac-curacy
+## Model Evaluation Strategy
+- Retrain the model on the training set using the best parameters
+- Make predictions and evaluate on the validation set (X_val, y_val)
+- Make final predictions and evaluate on the test set (X_test, y_test)
+- Calculate four core metrics: accuracy, precision, recall, and F1 score
+- Use a weighted average to calculate multi-class metrics; use the `f1-score` key for the F1 score
+## Cross-Validation Analysis
+- Perform a comprehensive evaluation of the optimal model configuration using 5-fold cross-validation
+- The cross-validation data consists of a combined training and test set
+- Record the average accuracy and standard deviation to assess model stability
+## SVM Algorithm Characteristics
+- SVM Binary Classification Performance: Binary classification predictions based on the maximum margin classifier, using kernel techniques to handle non-linearly sepa-rable data
+- Linear Separability of Binary Classification Data: The data distribution in feature space exhibits partially linear separability, requiring a kernel function to handle non-linear boundaries
+- Impact of Feature Redundancy: Feature noise influences the selection of support vec-tors; SVM automatically handles feature redundancy through its support vector mechanism
+- Sensitivity to Regularization: Adjusting the C parameter directly affects the number of support vectors and the complexity of the decision boundary, significantly impact-ing the model’s generalization performance
+- Prediction Stability for Borderline Samples: The decision boundary based on support vectors exhibits statistical stability in predictions near borderline samples
+- Training-validation discrepancy: The difference between the model’s generalization error and training error, as evaluated via cross-validation, is relatively small;
+- Hyperparameter optimization effectiveness: Grid search can identify the optimal combination of regularization and kernel parameters within the parameter space;
+- Computational efficiency: The SVM training process, based on quadratic program-ming optimization, exhibits polynomial time complexity in binary classification tasks
+- Cross-validation performance: 5-fold cross-validation evaluates the model’s general-ization ability and verifies performance consistency across different data subsets
