@@ -1,0 +1,40 @@
+Prompt Templates for the Five Major Modules
+## Feature Engineering and Selection
+- Select appropriate preprocessing methods based on algorithm characteristics:
+* [Description of standardization methods, such as StandardScaler, MinMaxScaler, etc.]
+* [Specific requirements and rationale for feature scaling/transformation]
+- [Feature importance analysis methods]
+- [Feature selection strategies]
+- Build a complete machine learning pipeline, including data processing and a classifier
+- [Algorithm-specific feature processing mechanisms, such as support vector mechanisms, bootstrap sampling, etc.]
+## Model Training and Hyperparameter Optimization
+- [Model Initialization and Basic Configuration]
+- Systematic hyperparameter tuning using GridSearchCV
+- Parameter grid settings:
+* [Parameter 1]: [Value 1, Value 2, Value 3]
+* [Parameter 2]: [Value 1, Value 2, Value 3]
+* [Parameter 3]: [Value 1, Value 2, Value 3]
+* [Additional parameters...]
+- Use [number]-fold cross-validation to ensure robustness in model evaluation
+- Use [evaluation metric, e.g., accuracy] as the evaluation metric
+- [Other GridSearchCV parameter settings, such as verbose, n_jobs, etc.]
+- Record the best parameter combination and the corresponding cross-validation accuracy
+- [Algorithm-specific optimization strategies or considerations]
+## Model Evaluation Strategy
+- Retrain the model on the training set using the optimal parameters
+- Make predictions and evaluate the model on the validation set
+- Make final predictions and evaluate the model on the test set
+- Calculate four core metrics: accuracy, precision, recall, and F1 score
+- Calculate multi-class metrics using a weighted average
+- [Algorithm-specific evaluation details, such as F1-score keys, classification reports, etc.]
+## Cross-Validation Analysis
+- Conduct a comprehensive evaluation of the optimal model configuration using [number]-fold cross-validation
+- The cross-validation data consists of [description of the dataset, e.g., a combination of the training and test sets]
+- Record the average accuracy and standard deviation to assess the model's stability
+- [Algorithm-specific cross-validation considerations or expected results]
+## [Algorithm Name] Algorithm Characteristics
+- [Core Principles and Mechanisms of the Algorithm]
+- [Performance Characteristics on the Current Dataset]
+- [Key Feature 1]: [Detailed Description]
+- [Key Feature 2]: [Detailed Description]
+- [Additional Features...]
